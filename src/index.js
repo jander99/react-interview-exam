@@ -1,3 +1,5 @@
+/* istanbul ignore file: generated */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
