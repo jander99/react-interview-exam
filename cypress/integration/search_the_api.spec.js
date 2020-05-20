@@ -1,12 +1,13 @@
 
 describe('Searching the API', () => {
 
+    before(() => cy.visit('http://localhost:3000'))
+
     beforeEach(() => {
-        cy.reset()
+        cy.reload()
     })
 
     it('Displays the Search instructions', () => {
-        cy.visit('http://localhost:3000');
 
         cy.findByText(/Please search by Username:/i).should('exist');
 
@@ -26,5 +27,10 @@ describe('Searching the API', () => {
         cy.findByTestId('searchBox').type('r')
         cy.findByTestId('searchBox').should('have.value', 'Br');
 
-    })
+    });
+
+    it('Searches for Bret', () => {
+        cy.findByTestId('searchBox').type('Br')
+        cy.findByTestId('resultsDiv').should('contain', 'Bret');
+    });
 })

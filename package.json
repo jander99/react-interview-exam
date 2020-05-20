@@ -18,6 +18,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "ctest": "react-scripts test --coverage --watchAll=false",
     "eject": "react-scripts eject",
     "cypress:open": "cypress open"
   },
@@ -44,6 +45,7 @@
     ]
   },
   "devDependencies": {
+    "axios-mock-adapter": "^1.18.1",
     "cypress": "^4.5.0"
   }
 }
