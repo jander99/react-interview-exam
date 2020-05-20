@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import { screen, waitFor, within } from '@testing-library/dom';
+import { waitFor, within } from '@testing-library/dom';
 import { act } from 'react-dom/test-utils'
 import axios from 'axios';
 import App from './App';
@@ -80,15 +80,14 @@ describe('Build the search page', () => {
 
   test('Displays Search results from API filtered', async () => {
     axios.get.mockResolvedValueOnce({ data: mockData });
-    render(<App />);
-    await waitFor(() => axios.get)
+    const { getByTestId } = render(<App />);
+    await waitFor(() => axios.get);
 
-    await act(async () => {
-      fireEvent.change(screen.getByTestId('searchBox'), {target: {value: 'Br'}})
-    })
+    await act(async () => fireEvent.change(getByTestId('searchBox'), {target: {value: 'Br'}}));
 
-    expect(screen.getByText(/Bret/)).toBeInTheDocument()
-    expect(screen.queryByText(/Antonette/)).toBeNull()
+    const  { getByText, queryByText } = within(getByTestId('resultsDiv'));
+    expect(getByText(/Bret/)).toBeInTheDocument();
+    expect(queryByText(/Antonette/)).toBeNull();
   })
 
 });
