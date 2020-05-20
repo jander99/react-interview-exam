@@ -1,38 +1,38 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { within } from '@testing-library/dom';
-import MockAdapter from 'axios-mock-adapter';
 import { act } from 'react-dom/test-utils'
 import axios from 'axios';
 import App from './App';
 
+// jest.mock('axios')
+
 describe('Build the search page', () => {
-  test('Renders Search text', () => {
-    const { getByText, getByTestId } = render(<App />)
-    const searchText = getByText(/Please search by Username:/i)
-    expect(searchText).toBeInTheDocument()
+  // test('Renders Search text', () => {
+  //   const { getByText, getByTestId } = render(<App />)
+  //   const searchText = getByText(/Please search by Username:/i)
+  //   expect(searchText).toBeInTheDocument()
   
-    const searchBox = getByTestId('searchBox')
-    expect(searchBox).toBeInTheDocument()
+  //   const searchBox = getByTestId('searchBox')
+  //   expect(searchBox).toBeInTheDocument()
     
   
-    const resultsDiv = getByTestId('resultsDiv')
-    expect(resultsDiv).toBeInTheDocument()
-  });
+  //   const resultsDiv = getByTestId('resultsDiv')
+  //   expect(resultsDiv).toBeInTheDocument()
+  // });
 
-  test('Types in the search box', () => {
-    const { getByText, getByTestId } = render(<App />)
-    const searchBox = getByTestId('searchBox')
-    expect(searchBox.value).toBe('')
+  // test('Types in the search box', () => {
+  //   const { getByText, getByTestId } = render(<App />)
+  //   const searchBox = getByTestId('searchBox')
+  //   expect(searchBox.value).toBe('')
 
-    fireEvent.change(searchBox, {target: {value: 'Br'}})
-    expect(searchBox.value).toBe('Br')
-  });
+  //   fireEvent.change(searchBox, {target: {value: 'Br'}})
+  //   expect(searchBox.value).toBe('Br')
+  // });
 
   test('Displays Search results from API filtered', async () => {
 
-    const mockData = [
-      {
+    const mockData = [{
         "id": 1,
         "name": "Leanne Graham",
         "username": "Bret",
@@ -77,10 +77,11 @@ describe('Build the search page', () => {
           "catchPhrase": "Proactive didactic contingency",
           "bs": "synergize scalable supply-chains"
         }
-      }]
+      }
+    ]
 
-    const mockRequest = new MockAdapter(axios)
-    mockRequest.onGet('https://jsonplaceholder.typicode.com/users').reply(200, mockData)
+    //axios.get.mockImplementationOnce(() => Promise.resolve(mockData))
+    // jest.spyOn(axios, 'get').mockResolvedValueOnce({data: mockData})
 
     const { getByTestId } = render(<App />)
     await act(async () => fireEvent.change(getByTestId('searchBox'), {target: {value: 'Br'}}))
@@ -88,11 +89,6 @@ describe('Build the search page', () => {
     const  { getByText } = within(getByTestId('resultsDiv'))
     expect(getByText(/Bret/)).toBeInTheDocument()
     expect(getByText(/Antonette/)).not.toBeInTheDocument()
-
-    await act(async () => fireEvent.change(getByTestId('searchBox'), {target: {value: 'Ant'}}))
-    expect(getByText(/Antonette/)).toBeInTheDocument()
-    expect(getByText(/Bret/)).not.toBeInTheDocument()
-    
   })
 
 });
