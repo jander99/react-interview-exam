@@ -86,6 +86,7 @@ describe('Build the search page', () => {
     await act(async () => fireEvent.change(getByTestId('searchBox'), {target: {value: 'Br'}}));
 
     const  { getByText, queryByText } = within(getByTestId('resultsDiv'));
+    expect(axios.get).toHaveBeenCalledTimes(1);
     expect(getByText(/Bret/)).toBeInTheDocument();
     expect(queryByText(/Antonette/)).toBeNull();
   })
