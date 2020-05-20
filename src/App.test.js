@@ -2,6 +2,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { within } from '@testing-library/dom';
 import MockAdapter from 'axios-mock-adapter';
+import { act } from 'react-dom/test-utils'
 import axios from 'axios';
 import App from './App';
 
@@ -28,7 +29,7 @@ describe('Build the search page', () => {
     expect(searchBox.value).toBe('Br')
   });
 
-  test('Displays Search results from API filtered', () => {
+  test('Displays Search results from API filtered', async () => {
 
     const mockData = [
       {
@@ -82,13 +83,15 @@ describe('Build the search page', () => {
     mockRequest.onGet('https://jsonplaceholder.typicode.com/users').reply(200, mockData)
 
     const { getByTestId } = render(<App />)
-    fireEvent.change(getByTestId('searchBox'), {target: {value: 'Br'}})
+    await act(async () => fireEvent.change(getByTestId('searchBox'), {target: {value: 'Br'}}))
 
     const  { getByText } = within(getByTestId('resultsDiv'))
-    expect(getByText('Bret')).toBeInTheDocument()
+    expect(getByText(/Bret/)).toBeInTheDocument()
+    expect(getByText(/Antonette/)).not.toBeInTheDocument()
 
-    fireEvent.change(getByTestId('searchBox'), {target: {value: 'Ant'}})
-    expect(getByText('Antonette')).toBeInTheDocument()
+    await act(async () => fireEvent.change(getByTestId('searchBox'), {target: {value: 'Ant'}}))
+    expect(getByText(/Antonette/)).toBeInTheDocument()
+    expect(getByText(/Bret/)).not.toBeInTheDocument()
     
   })
 
