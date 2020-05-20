@@ -87,7 +87,7 @@ describe('Build the search page', () => {
       fireEvent.change(screen.getByTestId('searchBox'), {target: {value: 'Br'}})
     })
 
-    expect(await screen.getByText(/Bret/)).toBeInTheDocument()
+    expect(screen.getByText(/Bret/)).toBeInTheDocument()
     expect(screen.queryByText(/Antonette/)).toBeNull()
   })
 
