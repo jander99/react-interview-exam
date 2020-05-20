@@ -1,9 +1,9 @@
-import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
-import { waitFor, within } from '@testing-library/dom';
+import React from 'react'
+import { render, fireEvent } from '@testing-library/react'
+import { waitFor, within } from '@testing-library/dom'
 import { act } from 'react-dom/test-utils'
-import axios from 'axios';
-import App from './App';
+import axios from 'axios'
+import App from './App'
 
 jest.mock('axios')
 
@@ -55,41 +55,73 @@ const mockData = [{
 }
 ]
 
+beforeEach(() => {
+  jest.clearAllMocks()
+})
+
 describe('Build the search page', () => {
-  // test('Renders Search text', () => {
-  //   const { getByText, getByTestId } = render(<App />)
-  //   const searchText = getByText(/Please search by Username:/i)
-  //   expect(searchText).toBeInTheDocument()
-  
-  //   const searchBox = getByTestId('searchBox')
-  //   expect(searchBox).toBeInTheDocument()
-    
-  
-  //   const resultsDiv = getByTestId('resultsDiv')
-  //   expect(resultsDiv).toBeInTheDocument()
-  // });
+  test('Renders Search text', () => {
+    const { getByText, getByTestId } = render(<App />)
+    const searchText = getByText(/Please search by Username:/i)
+    expect(searchText).toBeInTheDocument()
 
-  // test('Types in the search box', () => {
-  //   const { getByText, getByTestId } = render(<App />)
-  //   const searchBox = getByTestId('searchBox')
-  //   expect(searchBox.value).toBe('')
+    const searchBox = getByTestId('searchBox')
+    expect(searchBox).toBeInTheDocument()
 
-  //   fireEvent.change(searchBox, {target: {value: 'Br'}})
-  //   expect(searchBox.value).toBe('Br')
-  // });
+
+    const resultsDiv = getByTestId('resultsDiv')
+    expect(resultsDiv).toBeInTheDocument()
+  })
+
+  test('Types in the search box', () => {
+    const { getByTestId } = render(<App />)
+    const searchBox = getByTestId('searchBox')
+    expect(searchBox.value).toBe('')
+
+    fireEvent.change(searchBox, { target: { value: 'Br' } })
+    expect(searchBox.value).toBe('Br')
+  })
+
+  test('Display nothing if only one character is entered', () => {
+    const { getByTestId } = render(<App />)
+    const searchBox = getByTestId('searchBox')
+
+    fireEvent.change(searchBox, { target: { value: 'B' } })
+    expect(searchBox.value).toBe('B')
+
+    const resultsDiv = getByTestId('resultsDiv')
+    expect(resultsDiv.children).toHaveLength(0)
+
+  })
 
   test('Displays Search results from API filtered', async () => {
 
-    axios.get.mockResolvedValueOnce({data: mockData})
+    axios.get.mockResolvedValueOnce({ data: mockData })
 
     const { getByTestId } = render(<App />)
 
     await waitFor(() => axios.get)
 
-    await act(async () => fireEvent.change(getByTestId('searchBox'), {target: {value: 'Br'}}))
+    await act(async () => fireEvent.change(getByTestId('searchBox'), { target: { value: 'Br' } }))
+    expect(axios.get).toHaveBeenCalledTimes(1)
 
-    const  { getByText } = within(getByTestId('resultsDiv'))
+    const { getByText } = within(getByTestId('resultsDiv'))
+
     expect(getByText(/Bret/)).toBeInTheDocument()
+
   })
 
-});
+  test('Errors on Axios Call', async () => {
+
+    axios.get.mockRejectedValueOnce(new Error('Mock Error'))
+
+    const { getByTestId } = render(<App />)
+
+    await waitFor(() => axios.get)
+
+    await act(async () => fireEvent.change(getByTestId('searchBox'), { target: { value: 'Br' } }))
+
+    expect(axios.get).toHaveBeenCalledTimes(1)
+  })
+
+})

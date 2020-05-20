@@ -1,36 +1,27 @@
 
 describe('Searching the API', () => {
 
-    before(() => cy.visit('http://localhost:3000'))
+    before(() => cy.visit('http://localhost:3001'))
 
     beforeEach(() => {
         cy.reload()
     })
 
-    it('Displays the Search instructions', () => {
+    it('Searches the API', () => {
 
-        cy.findByText(/Please search by Username:/i).should('exist');
+        cy.findByText(/Please search by Username:/i).should('exist')
 
-        cy.findByTestId('searchBox').should('exist');
-        cy.findByTestId('searchBox').should('have.value', '');
+        cy.findByTestId('searchBox').should('have.value', '')
+        cy.findByTestId('resultsDiv').should('have.value', '')
+        
+        cy.findByTestId('searchBox').type('A')
+        cy.findByTestId('resultsDiv').should('have.value', '')
+        
+        cy.findByTestId('searchBox').type('nt')
+        cy.findByTestId('searchBox').should('have.value', 'Ant')
 
-        cy.findByTestId('resultsDiv').should('exist');
-        cy.findByTestId('resultsDiv').should('have.value', '');
+        cy.findByTestId('resultsDiv').should('contain', 'Antonette')
+        cy.findByTestId('resultsDiv').should('contain', 'Samantha')
 
-    });
-
-    it('Types in the Search box', () => {
-
-        cy.findByTestId('searchBox').type('B')
-        cy.findByTestId('searchBox').should('have.value', 'B');
-
-        cy.findByTestId('searchBox').type('r')
-        cy.findByTestId('searchBox').should('have.value', 'Br');
-
-    });
-
-    it('Searches for Bret', () => {
-        cy.findByTestId('searchBox').type('Br')
-        cy.findByTestId('resultsDiv').should('contain', 'Bret');
-    });
+    })
 })
