@@ -4,33 +4,35 @@ import './App.css';
 
 function App() {
 
-  const [search, setSearch] = useState('');
   const [data, setData] = useState('');
   const [filteredData, setfilteredData] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
-      await axios.get('https://jsonplaceholder.typicode.com/users')
-      .then(r => {
-        setData(r.data)
-      })
-      .catch(e => {
-        console.log(e)
-      });
+      try {
+        const response = await axios.get('https://jsonplaceholder.typicode.com/users');
+        if (response != null) {
+          setData(response.data)
+        }
+      } catch(error) {
+        console.log(error)
+      };
     };
 
     fetchData();
   }, [])
 
-  const filterDataByUsername = () => {
-    console.log(data)
-    //data.map(d => console.log(d))
+  const filterDataByUsername = (query) => {
+    const filtered = data
+    .map(user => user.username)
+    .filter(username => username.includes(query));
+    setfilteredData(filtered)
   }
 
-  const searchBoxChange = e => {
-    setSearch(e.target.value);
-    if(e.target.value.length > 1) {
-      filterDataByUsername()
+  const searchBoxChange = event => {
+    let val = event.target.value
+    if(val.length > 1) {
+      filterDataByUsername(val)
     }
   }
 
@@ -39,7 +41,6 @@ function App() {
       <span>Please search by Username: </span>
       <input data-testid='searchBox'
       type='text'
-      value={search}
       onChange={searchBoxChange} />
       <div data-testid='resultsDiv'>{JSON.stringify(filteredData)}</div>
     
