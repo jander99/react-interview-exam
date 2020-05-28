@@ -1,7 +1,7 @@
 
 describe('Searching the API', () => {
 
-    before(() => cy.visit('http://localhost:3001'))
+    before(() => cy.visit('http://localhost:3000'))
 
     beforeEach(() => {
         cy.reload()
@@ -13,10 +13,10 @@ describe('Searching the API', () => {
 
         cy.findByTestId('searchBox').should('have.value', '')
         cy.findByTestId('resultsDiv').should('have.value', '')
-        
+
         cy.findByTestId('searchBox').type('A')
         cy.findByTestId('resultsDiv').should('have.value', '')
-        
+
         cy.findByTestId('searchBox').type('nt')
         cy.findByTestId('searchBox').should('have.value', 'Ant')
 
